@@ -8,6 +8,8 @@ import corp.data.data.dto.Cliente;
 import corp.data.data.excepcion.ExcepcionDao;
 import corp.data.data.excepcion.ExcepcionManager;
 
+import java.util.List;
+
 public class ClienteManagerImplement implements ClienteManager {
 
     ClienteDao dao = new ClienteDaoImplement();
@@ -65,5 +67,24 @@ public class ClienteManagerImplement implements ClienteManager {
             mg.close();
         }
         return mensaje;
+    }
+
+    @Override
+    public List<Cliente> listado() throws ExcepcionManager {
+        ManagerConexion mg = ManagerConexion.getInstance();
+        mg.open();
+
+        try {
+           return  dao.listado();
+        } catch (ExcepcionDao e) {
+            mg.rolback();
+            throw new ExcepcionManager(e);
+        }catch (Exception e){
+            mg.rolback();
+            throw new ExcepcionManager(e);
+        }finally {
+            mg.close();
+        }
+
     }
 }

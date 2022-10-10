@@ -6,6 +6,8 @@ import corp.data.data.excepcion.ExcepcionDao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClienteDaoImplement implements ClienteDao{
 
@@ -119,6 +121,40 @@ public class ClienteDaoImplement implements ClienteDao{
             }
         }
         return _cliente_find;
+    }
+
+    @Override
+    public List<Cliente> listado() throws ExcepcionDao {
+        String SELECTBYID = "select * from clientes ";
+        List<Cliente> lista = new ArrayList<>();
+        PreparedStatement pstm = null;
+        ResultSet rs = null;
+        Cliente _cliente_find = null;
+        try {
+            pstm = conexion.getConexion().getConexion().prepareStatement(SELECTBYID);
+            rs = pstm.executeQuery();
+
+            while (rs.next()) {
+                _cliente_find = new Cliente();
+                _cliente_find.setIdentificacion_cliente(rs.getInt("identificacion_cliente"));
+                _cliente_find.setNombre_cliente(rs.getString("nombre_cliente"));
+                _cliente_find.setApellido1_cliente(rs.getString("apellido1_cliente"));
+                _cliente_find.setApellido2_cliente(rs.getString("apellido2_cliente"));
+                _cliente_find.setCorreo_cliente(rs.getString("correo_cliente"));
+                _cliente_find.setDireccion_cliente(rs.getString("direccion_cliente"));
+                lista.add(_cliente_find);
+            }
+        } catch (SQLException e) {
+            throw new ExcepcionDao(e);
+        }finally {
+            try {
+                rs.close();
+                pstm.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return lista;
     }
 
 }
